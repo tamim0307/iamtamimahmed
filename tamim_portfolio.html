@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamim Ahmed | Premium Portfolio</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#3a86ff',
+                        darkBg: '#0a0f1c',
+                        darkCard: 'rgba(255, 255, 255, 0.03)',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'blob': 'blob 7s infinite',
+                        'logoGlow': 'logoGlow 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        logoGlow: {
+                            '0%, 100%': { textShadow: '0 0 10px rgba(58, 134, 255, 0.5), 0 0 20px rgba(58, 134, 255, 0.3)' },
+                            '50%': { textShadow: '0 0 20px rgba(157, 78, 221, 0.8), 0 0 30px rgba(58, 134, 255, 0.6)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism Classes */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .glass-nav {
+            background: rgba(10, 15, 28, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(135deg, #3a86ff, #9d4edd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Scroll Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Portfolio Image Scroll Effect */
+        .portfolio-card {
+            overflow: hidden;
+            border-radius: 1rem;
+        }
+        .portfolio-img-wrapper {
+            height: 300px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        .portfolio-bg-scroll {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: top center;
+            transition: background-position 5s ease-in-out;
+        }
+        .portfolio-card:hover .portfolio-bg-scroll {
+            background-position: bottom center;
+        }
+
+        /* Typing Effect Cursor */
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 1s step-end infinite;
+            color: #3a86ff;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0f1c; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3a86ff; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2a66cc; 
+        }
+
+        /* Toast Notification */
+        #toast {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.5s, bottom 0.5s, visibility 0.5s;
+        }
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 30px;
+        }
+    </style>
+</head>
+<body class="antialiased font-sans selection:bg-primary selection:text-white">
+
+    <!-- Ambient Background Blobs -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob"></div>
+        <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-purple-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob animation-delay-2000"></div>
+        <div class="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-blue-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-blob animation-delay-4000"></div>
+    </div>
+
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0">
+                    <a href="#" class="font-heading font-bold text-2xl tracking-tighter text-gradient animate-logoGlow">
+                        Tamim
+                    </a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#home" class="hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="#about" class="hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">About</a>
+                        <a href="#skills" class="hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">Skills</a>
+                        <a href="#portfolio" class="hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">Portfolio</a>
+                        <a href="#contact" class="bg-gradient-to-r from-primary to-purple-500 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:shadow-lg hover:shadow-primary/30 transition-all transform hover:-translate-y-0.5">Let's Talk</a>
+                    </div>
+                </div>
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button" onclick="toggleMobileMenu()" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div class="md:hidden hidden glass" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-center">
+                <a href="#home" class="hover:text-primary block px-3 py-2 rounded-md text-base font-medium" onclick="toggleMobileMenu()">Home</a>
+                <a href="#about" class="hover:text-primary block px-3 py-2 rounded-md text-base font-medium" onclick="toggleMobileMenu()">About</a>
+                <a href="#skills" class="hover:text-primary block px-3 py-2 rounded-md text-base font-medium" onclick="toggleMobileMenu()">Skills</a>
+                <a href="#portfolio" class="hover:text-primary block px-3 py-2 rounded-md text-base font-medium" onclick="toggleMobileMenu()">Portfolio</a>
+                <a href="#contact" class="text-primary block px-3 py-2 rounded-md text-base font-medium" onclick="toggleMobileMenu()">Contact Me</a>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                
+                <!-- Text Content -->
+                <div class="reveal order-2 lg:order-1 text-center lg:text-left">
+                    <p class="text-primary font-medium tracking-wide mb-3 uppercase text-sm" id="hero-greeting">Welcome to my world</p>
+                    <h1 class="text-5xl md:text-7xl font-heading font-bold leading-tight mb-4">
+                        Hi, I'm <br/>
+                        <span class="text-gradient" id="dyn-name-hero">Tamim Ahmed</span>
+                    </h1>
+                    <h2 class="text-2xl md:text-3xl font-medium text-gray-300 mb-6">
+                        I am a <span id="typed-text" class="typing-cursor text-white font-semibold"></span>
+                    </h2>
+                    <p class="text-gray-400 text-lg mb-8 max-w-lg mx-auto lg:mx-0 leading-relaxed" id="dyn-hero-desc">
+                        Passionate about crafting digital experiences. Combining the power of modern Web Development with data-driven Digital Marketing strategies.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-10">
+                        <a href="#portfolio" class="bg-gradient-to-r from-primary to-purple-600 text-white px-8 py-3.5 rounded-full font-medium hover:shadow-lg hover:shadow-primary/40 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                            View My Work <i class="fas fa-arrow-right text-sm"></i>
+                        </a>
+                        <a href="#contact" class="glass text-white px-8 py-3.5 rounded-full font-medium hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                            Contact Me
+                        </a>
+                    </div>
+
+                    <!-- Social Icons (Facebook, Instagram, Telegram) -->
+                    <div class="flex items-center justify-center lg:justify-start gap-5" id="hero-socials">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Image Content -->
+                <div class="reveal order-1 lg:order-2 flex justify-center lg:justify-end relative">
+                    <div class="relative w-64 h-64 md:w-80 md:h-80 lg:w-[450px] lg:h-[450px]">
+                        <!-- Decorative background behind image -->
+                        <div class="absolute inset-0 bg-gradient-to-tr from-primary to-purple-500 rounded-[30%_70%_70%_30%/30%_30%_70%_70%] animate-blob opacity-50 blur-xl"></div>
+                        <div class="absolute inset-2 glass rounded-[30%_70%_70%_30%/30%_30%_70%_70%] animate-blob animation-delay-2000 border border-white/20"></div>
+                        
+                        <!-- Profile Image -->
+                        <img id="dyn-hero-img" src="" alt="Tamim Ahmed" class="absolute inset-0 w-full h-full object-cover rounded-[30%_70%_70%_30%/30%_30%_70%_70%] animate-float shadow-2xl border-4 border-white/10 object-top">
+                        
+                        <!-- Floating Badge -->
+                        <div class="absolute bottom-10 -left-10 glass px-6 py-3 rounded-2xl flex items-center gap-3 animate-float animation-delay-2000">
+                            <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                                <i class="fas fa-check text-green-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400">Status</p>
+                                <p class="font-bold text-white text-sm">Available for Work</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <p class="text-primary font-medium tracking-wider uppercase text-sm mb-2">Discover</p>
+                <h2 class="text-4xl md:text-5xl font-heading font-bold">About <span class="text-gradient">Me</span></h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary to-purple-500 mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- About Image -->
+                <div class="lg:col-span-5 reveal relative group">
+                    <div class="glass p-3 rounded-3xl transform transition duration-500 group-hover:-translate-y-2">
+                        <img id="dyn-about-img" src="" alt="About Me" class="w-full h-auto rounded-2xl grayscale group-hover:grayscale-0 transition duration-500 object-cover aspect-square">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#0a0f1c] via-transparent to-transparent opacity-60 rounded-3xl"></div>
+                    </div>
+                </div>
+                
+                <!-- About Text & Info -->
+                <div class="lg:col-span-7 reveal">
+                    <h3 class="text-2xl md:text-3xl font-heading font-semibold mb-6">Hello! I am <span class="text-primary" id="dyn-about-name">Tamim</span>.</h3>
+                    <p class="text-gray-400 leading-relaxed mb-8 text-lg" id="dyn-about-text">
+                        <!-- Populated by JS -->
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8" id="about-info-grid">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <a id="dyn-resume-btn" href="#" class="inline-flex items-center gap-2 glass border-primary/50 text-white px-8 py-3.5 rounded-full font-medium hover:bg-primary/20 transition-all">
+                        Download CV <i class="fas fa-download text-sm"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="py-24 relative bg-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <p class="text-primary font-medium tracking-wider uppercase text-sm mb-2">My Expertise</p>
+                <h2 class="text-4xl md:text-5xl font-heading font-bold">Skills & <span class="text-gradient">Services</span></h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary to-purple-500 mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                <!-- Skills Progress Bars -->
+                <div class="reveal">
+                    <h3 class="text-2xl font-heading font-semibold mb-8 flex items-center gap-3">
+                        <i class="fas fa-laptop-code text-primary"></i> Professional Skills
+                    </h3>
+                    <div class="space-y-6" id="skills-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Services/Experience Cards -->
+                <div class="reveal">
+                    <h3 class="text-2xl font-heading font-semibold mb-8 flex items-center gap-3">
+                        <i class="fas fa-briefcase text-primary"></i> What I Do
+                    </h3>
+                    <div class="space-y-6" id="services-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="portfolio" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <p class="text-primary font-medium tracking-wider uppercase text-sm mb-2">My Work</p>
+                <h2 class="text-4xl md:text-5xl font-heading font-bold">Featured <span class="text-gradient">Projects</span></h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary to-purple-500 mx-auto mt-4 rounded-full"></div>
+                <p class="text-gray-400 mt-6 max-w-2xl mx-auto">Hover over the project images to see the smooth scrolling effect, giving you a full preview of the landing pages.</p>
+            </div>
+
+            <!-- Portfolio Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="portfolio-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-24 relative bg-white/5 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+            <div class="text-center mb-16 reveal">
+                <p class="text-primary font-medium tracking-wider uppercase text-sm mb-2">Get in touch</p>
+                <h2 class="text-4xl md:text-5xl font-heading font-bold">Contact <span class="text-gradient">Me</span></h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary to-purple-500 mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                
+                <!-- Contact Info Cards -->
+                <div class="lg:col-span-4 space-y-6 reveal">
+                    <div class="glass p-6 rounded-2xl flex items-start gap-4 hover:-translate-y-1 transition-transform border border-white/10 hover:border-primary/50">
+                        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                            <i class="fas fa-map-marker-alt text-primary text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-white mb-1">Location</h4>
+                            <p class="text-gray-400" id="contact-location">Sylhet, Bangladesh</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glass p-6 rounded-2xl flex items-start gap-4 hover:-translate-y-1 transition-transform border border-white/10 hover:border-primary/50">
+                        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                            <i class="fas fa-envelope text-primary text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-white mb-1">Email</h4>
+                            <a href="#" id="contact-email" class="text-gray-400 hover:text-primary transition-colors">email@example.com</a>
+                        </div>
+                    </div>
+                    
+                    <div class="glass p-6 rounded-2xl flex items-start gap-4 hover:-translate-y-1 transition-transform border border-white/10 hover:border-primary/50">
+                        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                            <i class="fas fa-phone-alt text-primary text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-white mb-1">Phone</h4>
+                            <a href="#" id="contact-phone" class="text-gray-400 hover:text-primary transition-colors">+880...</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="lg:col-span-8 reveal">
+                    <form id="contact-form" class="glass p-8 rounded-3xl border border-white/10">
+                        <h3 class="text-2xl font-heading font-semibold mb-6">Send Me a Message</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Your Name</label>
+                                <input type="text" id="form-name" required class="w-full bg-[#0a0f1c]/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder-gray-600" placeholder="John Doe">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Phone Number</label>
+                                <input type="text" id="form-phone" required class="w-full bg-[#0a0f1c]/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder-gray-600" placeholder="+8801...">
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
+                            <input type="email" id="form-email" required class="w-full bg-[#0a0f1c]/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder-gray-600" placeholder="john@example.com">
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Your Message</label>
+                            <textarea id="form-message" required rows="5" class="w-full bg-[#0a0f1c]/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder-gray-600 resize-none" placeholder="How can I help you?"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-primary to-purple-600 text-white font-medium py-4 rounded-xl hover:shadow-[0_0_20px_rgba(58,134,255,0.4)] transition-all flex items-center justify-center gap-2 group">
+                            <span>Send Message</span> 
+                            <i class="fas fa-paper-plane group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Embedded Google Map -->
+        <div class="w-full h-[400px] reveal mt-10">
+            <iframe id="gmap-iframe" src="" width="100%" height="100%" style="border:0; filter: invert(90%) hue-rotate(180deg) brightness(85%) contrast(85%);" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </section>
+
+    <footer class="bg-[#050810] py-8 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="flex justify-center gap-6 mb-6" id="footer-socials">
+                <!-- Populated by JS -->
+            </div>
+            <p class="text-gray-500 text-sm">
+                &copy; <span id="current-year"></span> <span id="footer-name" class="text-gray-300 font-medium"></span>. All rights reserved.<br>
+                <span class="text-xs mt-2 block">Designed with ❤️ for a Premium Web Experience.</span>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Custom Toast Notification -->
+    <div id="toast" class="fixed left-1/2 -translate-x-1/2 bg-green-500/20 glass text-green-400 border border-green-500/30 px-6 py-3 rounded-full flex items-center gap-3 z-50">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-msg">Message sent successfully!</span>
+    </div>
+
+    <script>
+        /* 
+        ====================================================
+        DYNAMIC DATA MANAGEMENT (Edit this object to update the site)
+        ====================================================
+        */
+        const portfolioData = {
+            personal: {
+                name: "Tamim Ahmed",
+                roles: ["Digital Marketer", "Web Developer", "CSE Engineering Student"],
+                phone: "+8801957621145",
+                email: "mdtamimahmed2267@gmail.com",
+                location: "Sylhet, Bangladesh",
+                about: "I am a passionate Web Developer and Digital Marketer currently studying CSE Engineering at Leading University. I specialize in building modern, responsive, and user-centric web applications while leveraging digital marketing strategies to maximize online presence. I blend technical coding skills with creative marketing solutions.",
+                profileImage: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhc0rhRetBSLT12xW4gOhAE9Y_CJs1P7-rQrWnb9LbKz6dU5eF711tXyR6IF7bp37XmHT46Muhn6V3n596euQACebbwVdHvxxeNOCLlVDKq6z6R4PmowKKhFrGWCEPIYTW8M0x3U_0KzmVyUo2mTq0hwqzwE2XezHhRxukJCISJblMgXViYZ4dnbkqE1Wk/s1600/_MG_9979.JPG",
+                resumeLink: "#" 
+            },
+            social: {
+                facebook: "https://www.facebook.com/md.ta.tamim.ahmed",
+                instagram: "https://www.instagram.com/mdtamim_45/#",
+                telegram: "https://t.me/tatamim30"
+            },
+            skills: [
+                { name: "HTML5 & CSS3", level: 95 },
+                { name: "Tailwind CSS", level: 90 },
+                { name: "JavaScript", level: 85 },
+                { name: "React & Modern UI", level: 75 },
+                { name: "SEO & Digital Marketing", level: 88 },
+                { name: "Social Media Management", level: 92 }
+            ],
+            services: [
+                {
+                    icon: "fa-code",
+                    title: "Web Development",
+                    desc: "Creating visually appealing, fully responsive, and highly functional modern websites."
+                },
+                {
+                    icon: "fa-bullhorn",
+                    title: "Digital Marketing",
+                    desc: "Data-driven marketing strategies, SEO, and ad campaigns to boost your brand's growth."
+                },
+                {
+                    icon: "fa-graduation-cap",
+                    title: "CSE Engineering",
+                    desc: "Strong foundation in Computer Science principles, algorithms, and software engineering from Leading University."
+                }
+            ],
+            portfolio: [
+                {
+                    title: "AI Agent SaaS Platform",
+                    category: "Web Development",
+                    image: "https://images.unsplash.com/photo-1661956602116-aa6865609028?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=1500&q=80",
+                    liveLink: "#",
+                    githubLink: "#"
+                },
+                {
+                    title: "Marketing Analytics Dashboard",
+                    category: "Digital Marketing",
+                    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=1500&q=80",
+                    liveLink: "#",
+                    githubLink: "#"
+                },
+                {
+                    title: "E-Commerce Landing Page",
+                    category: "UI/UX & Web Dev",
+                    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=1500&q=80",
+                    liveLink: "#",
+                    githubLink: "#"
+                }
+            ],
+            settings: {
+                googleScriptURL: "https://script.google.com/macros/s/AKfycbzJu3WE9a7iPEudzYtpftQqvtt_WibUygKEP6Nv82ADTuS0rfS7yiuHsccNnqE5erlkOg/exec", 
+                googleMapIframeURL: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115860.27964522037!2d91.8021896894567!3d24.89973801269382!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x375054d3d270329f%3A0xf58ef93431f67382!2sSylhet!5e0!3m2!1sen!2sbd!4v1700000000000!5m2!1sen!2sbd"
+            }
+        };
+
+        /* 
+        ====================================================
+        WEBSITE INITIALIZATION & DOM POPULATION
+        ====================================================
+        */
+        document.addEventListener('DOMContentLoaded', () => {
+            initPortfolioData();
+            initTypingEffect();
+            initScrollReveal();
+            
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+        });
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow-lg', 'shadow-primary/5');
+                nav.style.background = 'rgba(10, 15, 28, 0.95)';
+            } else {
+                nav.classList.remove('shadow-lg', 'shadow-primary/5');
+                nav.style.background = 'rgba(10, 15, 28, 0.8)';
+            }
+        });
+
+        function initPortfolioData() {
+            document.title = `${portfolioData.personal.name} | Premium Portfolio`;
+            document.getElementById('dyn-name-hero').textContent = portfolioData.personal.name;
+            document.getElementById('dyn-about-name').textContent = portfolioData.personal.name.split(' ')[0];
+            document.getElementById('footer-name').textContent = portfolioData.personal.name;
+            
+            document.getElementById('dyn-about-text').innerHTML = portfolioData.personal.about;
+            document.getElementById('dyn-resume-btn').href = portfolioData.personal.resumeLink;
+            
+            document.getElementById('dyn-hero-img').src = portfolioData.personal.profileImage;
+            document.getElementById('dyn-about-img').src = portfolioData.personal.profileImage;
+
+            document.getElementById('contact-location').textContent = portfolioData.personal.location;
+            
+            const emailEl = document.getElementById('contact-email');
+            emailEl.textContent = portfolioData.personal.email;
+            emailEl.href = `mailto:${portfolioData.personal.email}`;
+            
+            const phoneEl = document.getElementById('contact-phone');
+            phoneEl.textContent = portfolioData.personal.phone;
+            phoneEl.href = `tel:${portfolioData.personal.phone}`;
+
+            document.getElementById('gmap-iframe').src = portfolioData.settings.googleMapIframeURL;
+
+            // Generate Social Links (Facebook, Instagram, Telegram)
+            const socialsHtml = `
+                <a href="${portfolioData.social.facebook}" target="_blank" class="w-10 h-10 rounded-full glass flex items-center justify-center text-gray-300 hover:text-primary hover:-translate-y-1 transition-all"><i class="fab fa-facebook-f"></i></a>
+                <a href="${portfolioData.social.instagram}" target="_blank" class="w-10 h-10 rounded-full glass flex items-center justify-center text-gray-300 hover:text-primary hover:-translate-y-1 transition-all"><i class="fab fa-instagram"></i></a>
+                <a href="${portfolioData.social.telegram}" target="_blank" class="w-10 h-10 rounded-full glass flex items-center justify-center text-gray-300 hover:text-primary hover:-translate-y-1 transition-all"><i class="fab fa-telegram-plane"></i></a>
+            `;
+            document.getElementById('hero-socials').innerHTML = socialsHtml;
+            document.getElementById('footer-socials').innerHTML = socialsHtml;
+
+            const aboutGridHtml = `
+                <div class="glass p-4 rounded-xl border border-white/5">
+                    <p class="text-sm text-gray-400 mb-1">Name</p>
+                    <p class="font-semibold text-white">${portfolioData.personal.name}</p>
+                </div>
+                <div class="glass p-4 rounded-xl border border-white/5">
+                    <p class="text-sm text-gray-400 mb-1">Education</p>
+                    <p class="font-semibold text-white">CSE Engineering, Leading University</p>
+                </div>
+                <div class="glass p-4 rounded-xl border border-white/5">
+                    <p class="text-sm text-gray-400 mb-1">Email</p>
+                    <p class="font-semibold text-white text-sm sm:text-base break-words">${portfolioData.personal.email}</p>
+                </div>
+                <div class="glass p-4 rounded-xl border border-white/5">
+                    <p class="text-sm text-gray-400 mb-1">Location</p>
+                    <p class="font-semibold text-white">${portfolioData.personal.location}</p>
+                </div>
+            `;
+            document.getElementById('about-info-grid').innerHTML = aboutGridHtml;
+
+            const skillsContainer = document.getElementById('skills-container');
+            portfolioData.skills.forEach(skill => {
+                skillsContainer.innerHTML += `
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <span class="font-medium text-gray-300">${skill.name}</span>
+                            <span class="text-primary font-bold">${skill.level}%</span>
+                        </div>
+                        <div class="w-full bg-white/5 rounded-full h-2.5 border border-white/5">
+                            <div class="bg-gradient-to-r from-primary to-purple-500 h-2.5 rounded-full relative" style="width: ${skill.level}%">
+                                <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-[0_0_10px_#3a86ff]"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const servicesContainer = document.getElementById('services-container');
+            portfolioData.services.forEach(service => {
+                servicesContainer.innerHTML += `
+                    <div class="glass p-6 rounded-2xl border border-white/5 hover:border-primary/30 transition-colors group flex gap-5 items-start">
+                        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                            <i class="fas ${service.icon} text-primary text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-semibold text-white mb-2">${service.title}</h4>
+                            <p class="text-gray-400 text-sm leading-relaxed">${service.desc}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const portfolioGrid = document.getElementById('portfolio-grid');
+            portfolioData.portfolio.forEach(project => {
+                portfolioGrid.innerHTML += `
+                    <div class="portfolio-card glass border border-white/10 hover:border-primary/50 transition-all duration-300 group">
+                        <div class="portfolio-img-wrapper">
+                            <div class="portfolio-bg-scroll" style="background-image: url('${project.image}');"></div>
+                            
+                            <div class="absolute inset-0 bg-[#0a0f1c]/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 backdrop-blur-sm">
+                                <a href="${project.liveLink}" target="_blank" class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center hover:scale-110 transition-transform shadow-[0_0_15px_rgba(58,134,255,0.5)]" title="Live Preview">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="${project.githubLink}" target="_blank" class="w-12 h-12 rounded-full glass text-white border-white/20 flex items-center justify-center hover:scale-110 hover:bg-white/10 transition-all" title="Details / GitHub">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <span class="text-xs font-semibold text-primary tracking-wider uppercase">${project.category}</span>
+                            <h4 class="text-xl font-bold text-white mt-2 mb-3">${project.title}</h4>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function initTypingEffect() {
+            const typedTextSpan = document.getElementById("typed-text");
+            const textArray = portfolioData.personal.roles;
+            const typingDelay = 100;
+            const erasingDelay = 50;
+            const newTextDelay = 2000; 
+            let textArrayIndex = 0;
+            let charIndex = 0;
+
+            function type() {
+                if (charIndex < textArray[textArrayIndex].length) {
+                    typedTextSpan.textContent += textArray[textArrayIndex].charAt(charIndex);
+                    charIndex++;
+                    setTimeout(type, typingDelay);
+                } else {
+                    setTimeout(erase, newTextDelay);
+                }
+            }
+
+            function erase() {
+                if (charIndex > 0) {
+                    typedTextSpan.textContent = textArray[textArrayIndex].substring(0, charIndex - 1);
+                    charIndex--;
+                    setTimeout(erase, erasingDelay);
+                } else {
+                    textArrayIndex++;
+                    if (textArrayIndex >= textArray.length) textArrayIndex = 0;
+                    setTimeout(type, typingDelay + 500);
+                }
+            }
+
+            if (textArray.length) setTimeout(type, newTextDelay + 250);
+        }
+
+        function initScrollReveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            
+            const revealOptions = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) {
+                        return;
+                    } else {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, revealOptions);
+
+            reveals.forEach(reveal => {
+                revealOnScroll.observe(reveal);
+            });
+        }
+
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            btn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('Name', document.getElementById('form-name').value);
+            formData.append('Phone', document.getElementById('form-phone').value);
+            formData.append('Email', document.getElementById('form-email').value);
+            formData.append('Message', document.getElementById('form-message').value);
+
+            const scriptURL = portfolioData.settings.googleScriptURL;
+
+            if (scriptURL) {
+                fetch(scriptURL, { method: 'POST', body: formData })
+                    .then(response => {
+                        showToast("Message sent successfully!");
+                        this.reset();
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    })
+                    .catch(error => {
+                        showToast("Error sending message. Try again later.");
+                        console.error('Error!', error.message);
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    });
+            } else {
+                setTimeout(() => {
+                    showToast("Form ready! Add Google Script URL to activate.");
+                    this.reset();
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }, 1500);
+            }
+        });
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
